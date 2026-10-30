@@ -1,5 +1,7 @@
 # BDR Dragon Workspace
 
+**Live app: [dx-bdr-dragon.vercel.app](https://dx-bdr-dragon.vercel.app)**
+
 A separate, working BDR workspace based on [SDR-Metrics](https://github.com/noahcoleman76/SDR-Metrics), inspected at commit `40bc948502588815d444d13c7716b60d0d5680d7`. The original repository and production deployment were not modified.
 
 The new source destination is [DX-BDR-Dragon](https://github.com/noahcoleman76/DX-BDR-Dragon). This directory is an independent frontend project and Git repository. It contains no original backend, authentication provider, credentials, API integration, or Vercel project identity.
@@ -82,28 +84,22 @@ Data belongs to the browser profile and site origin. Local development and a dep
 
 Production build and TypeScript checking passed. Oxlint passed. All 18 automated tests passed, including a run with `TZ=America/Denver`. Browser checks covered account CRUD, filtering, autosave and dates, account/contact messaging, shared task transitions and persistent ordering, the actual Settings controls, and desktop/mobile layouts. See [VERIFICATION.md](VERIFICATION.md) for evidence and limits.
 
-## Deploy as a separate Vercel project
+## Live deployment and automatic updates
 
-The Vercel project `dx-bdr-dragon` is connected to `noahcoleman76/DX-BDR-Dragon` with Node.js 24, the Vite preset, `npm ci`, `npm run build`, and `dist` output. Pushes to `main` trigger production deployments. The original SDR-Metrics project remains separate.
+The app is deployed as the separate Vercel project `dx-bdr-dragon`, in `noahcoleman76s-projects`, connected to `noahcoleman76/DX-BDR-Dragon`. The original SDR-Metrics project and deployment remain unchanged.
 
-1. In Vercel, select **Add New → Project** and import **noahcoleman76/DX-BDR-Dragon**. Create a new project named `dx-bdr-workspace` or another unused name. Do not import or link the SDR-Metrics production project.
-2. Use the repository root as Root Directory, **Vite** as Framework Preset, Node.js **24.x**, install command `npm ci`, build command `npm run build`, and output directory `dist`.
-3. No environment variables, database or authentication setup are required. The included `vercel.json` retains the source app's SPA rewrite for direct navigation and refresh on `/tasks`, `/accounts` and `/settings`.
-4. Deploy the new project. Check account creation, refresh persistence and task synchronization on the new URL. Browser-local preview records do not automatically transfer to that origin.
+- Production URL: **https://dx-bdr-dragon.vercel.app**
+- Dashboard: https://vercel.com/noahcoleman76s-projects/dx-bdr-dragon
+- Production branch: `main`
+- Framework: Vite; Node.js: 24.x
+- Install: `npm ci`; build: `npm run build`; output: `dist`
+- No application environment variables, database or authentication are required.
 
-Alternatively, from this directory:
+Pushes to `main` automatically trigger production builds and publication. This connection was verified by pushing a commit and observing its matching production deployment reach READY. Code changes appear after the build completes; refresh the page to load the new version. Use the permanent production URL above so browser-local records remain on the same site origin.
 
-```powershell
-npx vercel
-```
+The included `vercel.json` preserves the source app's SPA rewrite. Direct navigation and refresh on `/tasks`, `/accounts` and `/settings` work. If working locally, use `npm run dev` for immediate development updates, then commit and push reviewed changes to publish them.
 
-Choose **N** when asked whether to link to an existing project, then name the new project. After verifying its identity and preview:
-
-```powershell
-npx vercel --prod
-```
-
-Official references: [Vite on Vercel](https://vercel.com/docs/frameworks/frontend/vite), [CLI deployment](https://vercel.com/docs/projects/deploy-from-cli), [project linking](https://vercel.com/docs/cli/project-linking).
+The local Vercel link and automatically managed authentication files are ignored by Git. They are not included in the source archive. Do not copy them into another project.
 
 ## Logical future improvements — not implemented
 

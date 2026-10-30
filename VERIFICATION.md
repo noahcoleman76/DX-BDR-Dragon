@@ -52,6 +52,6 @@ The core workflows were checked during implementation and rechecked after integr
 
 The SDR-Metrics clone remained clean at the inspected commit. No original source changes were pushed and no original deployment was touched. The new application has a separate Git repository and Vercel configuration, and no copied API client, authentication provider or environment credentials.
 
-No Vercel deployment was attempted because the Vercel connection is unavailable. The production build was exercised through a local preview, not a Vercel-hosted URL. Vercel project creation and post-deployment smoke checks remain for the account owner; exact steps are in README.md.
+Vercel is now connected. A push to main automatically created production deployment dpl_2HEjVoFcjEWNitse3vD9ydy7xSBG for commit 55746c9, which reached READY with a 13-second build. The permanent URL is https://dx-bdr-dragon.vercel.app. Hosted browser checks verified account creation, refresh persistence, and task completion shared between Accounts and Tasks. Temporary verification records were removed. The production build uses Vite, Node.js 24, npm ci, npm run build, and dist output.
 
 This is browser-local storage: records do not synchronize across devices, origins or simultaneous tabs. The original authenticated password-change feature is excluded as required by the no-authentication/no-password-management scope.
