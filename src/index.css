@@ -1,0 +1,83 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-slate-100 dark:bg-slate-900 text-slate-900 dark:text-slate-100;
+}
+
+@layer components {
+  .panel { @apply bg-white dark:bg-slate-800 rounded-xl shadow border border-slate-200 dark:border-slate-700; }
+  .muted { @apply text-slate-500 dark:text-slate-400; }
+  .btn { @apply px-3 py-2 text-sm rounded border border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors; }
+  .btn.primary { @apply bg-slate-900 text-white border-slate-900 hover:bg-slate-700 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white; }
+  .btn.small { @apply text-xs px-2 py-1.5; }
+  .icon { @apply rounded px-2 py-1 text-slate-500 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors; }
+  .danger { @apply text-red-600 dark:text-red-400; }
+  .input { @apply w-full min-w-0 px-3 py-2 rounded border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 text-sm text-slate-900 dark:text-slate-100; }
+  .field { @apply block space-y-2 text-sm; }
+  .field > span:first-child { @apply text-slate-600 dark:text-slate-300; }
+  .link { @apply text-slate-700 dark:text-slate-200 underline underline-offset-4 hover:text-slate-500; }
+  .record-card, .task-card { @apply rounded-lg border border-slate-200 dark:border-slate-700 p-4; }
+  .task-card { @apply bg-slate-50 dark:bg-slate-900; }
+  .section-label { @apply text-sm font-semibold; }
+  .count { @apply text-xs font-normal text-slate-500 dark:text-slate-400 ml-1; }
+  .empty { @apply px-5 py-12 text-center; }
+  .empty h3 { @apply text-sm font-medium; }
+  .empty-mark { @apply text-3xl text-slate-300 dark:text-slate-600 mb-3; }
+  .nav-link { @apply px-3 py-2 rounded hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors; }
+  .nav-link.active { @apply bg-slate-100 dark:bg-slate-700 font-medium; }
+  .account-card { @apply rounded-lg border border-slate-200 dark:border-slate-700 border-l-4 transition-colors; }
+  .account-card.selected { @apply bg-slate-100 dark:bg-slate-700; }
+  .account-card:hover { @apply bg-slate-50 dark:bg-slate-700; }
+  .tabs { @apply flex px-5 gap-5 border-b border-slate-200 dark:border-slate-700; }
+  .tab { @apply py-3 text-sm text-slate-500 dark:text-slate-400 border-b-2 border-transparent; }
+  .tab.active { @apply text-slate-900 dark:text-slate-100 border-slate-900 dark:border-slate-100 font-medium; }
+  .badge { @apply rounded px-2 py-1 text-xs bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-300; }
+  .badge.current { @apply text-emerald-700 bg-emerald-50 dark:bg-emerald-900/30 dark:text-emerald-300; }
+  .storage-error { @apply rounded border border-red-300 bg-red-50 p-4 text-sm text-red-900; }
+}
+
+button:disabled { opacity: .35; cursor: not-allowed; }
+:focus-visible { outline: 2px solid #64748b; outline-offset: 3px; }
+textarea { line-height: 1.6; }
+input[type='date'] { color-scheme: light; }
+.dark input[type='date'] { color-scheme: dark; }
+[hidden] { display: none !important; }
+.edit-cue { position: absolute; right: .6rem; top: .5rem; opacity: .5; pointer-events: none; }
+.field:has(input[type='date']) .edit-cue { display: none; }
+.task-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; align-items: start; }
+.task-grid > section:last-child { grid-column: 1 / -1; }
+.task-check { width: 1rem; height: 1rem; margin-top: .25rem; flex-shrink: 0; accent-color: #64748b; cursor: pointer; }
+.completed .task-name { text-decoration: line-through; opacity: .55; }
+.drag-handle { cursor: grab; touch-action: none; user-select: none; }
+.dragging .drag-handle { cursor: grabbing; }
+.drop-target { outline: 2px solid #64748b; }
+.account-grid { display: grid; grid-template-columns: minmax(280px, .85fr) minmax(0, 2fr); gap: 1rem; height: calc(100dvh - 180px); min-height: 480px; }
+.account-list, .account-workspace { display: flex; flex-direction: column; overflow: hidden; }
+.account-list-scroll, .workspace-content { overflow-y: auto; flex: 1; min-height: 0; overflow-wrap: anywhere; }
+.account-select { border-radius: .5rem; }
+.mobile-back { display: none; }
+.message-preview { display: flex; align-items: flex-start; gap: 1rem; font-size: .875rem; list-style: none; }
+.message-preview > span:first-child { flex: 1; }
+.chevron { flex-shrink: 0; display: inline-block; transition: transform .15s; }
+details[open] > summary .chevron { transform: rotate(180deg); }
+.modal { width: min(600px, calc(100vw - 2rem)); max-height: calc(100dvh - 2rem); border: 0; padding: 1.5rem; border-radius: .75rem; background: #fff; color: #0f172a; box-shadow: 0 24px 80px #0003; }
+.dark .modal { background: #1e293b; color: #f1f5f9; }
+.modal::backdrop { background: rgb(15 23 42 / .5); }
+@media (max-width: 767px) {
+  nav { flex-wrap: wrap; gap: .75rem; }
+  .nav-content { display: contents; }
+  .main-links { order: 3; width: 100%; justify-content: space-between; }
+  .nav-link { padding: .5rem; }
+  .task-grid { grid-template-columns: minmax(0, 1fr); }
+  .account-grid { grid-template-columns: minmax(0, 1fr); height: auto; min-height: calc(100dvh - 230px); }
+  .account-workspace { display: none; }
+  .has-selection .account-list { display: none; }
+  .has-selection .account-workspace { display: flex; }
+  .account-list-scroll, .workspace-content { overflow: visible; }
+  .mobile-back { display: inline-block; }
+  .tabs { gap: 1rem; padding: 0 1rem; }
+  .workspace-content { padding: 1rem; }
+}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: 0s !important; scroll-behavior: auto !important; } }
