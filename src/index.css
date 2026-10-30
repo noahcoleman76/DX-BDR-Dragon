@@ -1,83 +1,548 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@import "./workspace.css";
+
+:root {
+  --accent: #0284c7;
+  --accent-soft: #e0f2fe;
+  --accent-glow: #0284c7;
+  --accent-contrast: #ffffff;
+  --surface: #ffffff;
+  --surface-soft: #eef3f8;
+  --app-bg: #edf2f7;
+  --panel-image: url("/honeycomb-panels-light.svg");
+  --panel-opacity: 0.8;
+  --neon-opacity: 0.4;
+  --honeycomb-width: 94.5px;
+  --honeycomb-height: 54.558px;
+  --background-accent-start: 14%;
+  --background-accent-middle: 5%;
+  --background-accent-end: 10%;
+  --wave-opacity: 0.42;
+  --wave-highlight: rgb(255 255 255 / 0.5);
+  --text-main: #172033;
+  --text-muted: #526277;
+  --border-soft: #c7d2df;
+  color: #172033;
+  background: #f7f8fb;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --surface: #182332;
+  --surface-soft: #223044;
+  --app-bg: #080d14;
+  --panel-image: url("/honeycomb-panels.svg");
+  --panel-opacity: 1;
+  --neon-opacity: 0.95;
+  --background-accent-start: 17%;
+  --background-accent-middle: 5%;
+  --background-accent-end: 10%;
+  --wave-opacity: 0.28;
+  --wave-highlight: rgb(255 255 255 / 0.12);
+  --text-main: #f1f5f9;
+  --text-muted: #aebdd0;
+  --border-soft: #3a4b62;
+  color: var(--text-main);
+  background: var(--app-bg);
+}
+
+* {
+  box-sizing: border-box;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--accent) 55%, var(--text-muted) 45%) color-mix(in srgb, var(--surface-soft) 88%, transparent);
+}
 
 body {
-  @apply bg-slate-100 dark:bg-slate-900 text-slate-900 dark:text-slate-100;
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  isolation: isolate;
 }
 
-@layer components {
-  .panel { @apply bg-white dark:bg-slate-800 rounded-xl shadow border border-slate-200 dark:border-slate-700; }
-  .muted { @apply text-slate-500 dark:text-slate-400; }
-  .btn { @apply px-3 py-2 text-sm rounded border border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors; }
-  .btn.primary { @apply bg-slate-900 text-white border-slate-900 hover:bg-slate-700 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white; }
-  .btn.small { @apply text-xs px-2 py-1.5; }
-  .icon { @apply rounded px-2 py-1 text-slate-500 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors; }
-  .danger { @apply text-red-600 dark:text-red-400; }
-  .input { @apply w-full min-w-0 px-3 py-2 rounded border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 text-sm text-slate-900 dark:text-slate-100; }
-  .field { @apply block space-y-2 text-sm; }
-  .field > span:first-child { @apply text-slate-600 dark:text-slate-300; }
-  .link { @apply text-slate-700 dark:text-slate-200 underline underline-offset-4 hover:text-slate-500; }
-  .record-card, .task-card { @apply rounded-lg border border-slate-200 dark:border-slate-700 p-4; }
-  .task-card { @apply bg-slate-50 dark:bg-slate-900; }
-  .section-label { @apply text-sm font-semibold; }
-  .count { @apply text-xs font-normal text-slate-500 dark:text-slate-400 ml-1; }
-  .empty { @apply px-5 py-12 text-center; }
-  .empty h3 { @apply text-sm font-medium; }
-  .empty-mark { @apply text-3xl text-slate-300 dark:text-slate-600 mb-3; }
-  .nav-link { @apply px-3 py-2 rounded hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors; }
-  .nav-link.active { @apply bg-slate-100 dark:bg-slate-700 font-medium; }
-  .account-card { @apply rounded-lg border border-slate-200 dark:border-slate-700 border-l-4 transition-colors; }
-  .account-card.selected { @apply bg-slate-100 dark:bg-slate-700; }
-  .account-card:hover { @apply bg-slate-50 dark:bg-slate-700; }
-  .tabs { @apply flex px-5 gap-5 border-b border-slate-200 dark:border-slate-700; }
-  .tab { @apply py-3 text-sm text-slate-500 dark:text-slate-400 border-b-2 border-transparent; }
-  .tab.active { @apply text-slate-900 dark:text-slate-100 border-slate-900 dark:border-slate-100 font-medium; }
-  .badge { @apply rounded px-2 py-1 text-xs bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-300; }
-  .badge.current { @apply text-emerald-700 bg-emerald-50 dark:bg-emerald-900/30 dark:text-emerald-300; }
-  .storage-error { @apply rounded border border-red-300 bg-red-50 p-4 text-sm text-red-900; }
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
 }
 
-button:disabled { opacity: .35; cursor: not-allowed; }
-:focus-visible { outline: 2px solid #64748b; outline-offset: 3px; }
-textarea { line-height: 1.6; }
-input[type='date'] { color-scheme: light; }
-.dark input[type='date'] { color-scheme: dark; }
-[hidden] { display: none !important; }
-.edit-cue { position: absolute; right: .6rem; top: .5rem; opacity: .5; pointer-events: none; }
-.field:has(input[type='date']) .edit-cue { display: none; }
-.task-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; align-items: start; }
-.task-grid > section:last-child { grid-column: 1 / -1; }
-.task-check { width: 1rem; height: 1rem; margin-top: .25rem; flex-shrink: 0; accent-color: #64748b; cursor: pointer; }
-.completed .task-name { text-decoration: line-through; opacity: .55; }
-.drag-handle { cursor: grab; touch-action: none; user-select: none; }
-.dragging .drag-handle { cursor: grabbing; }
-.drop-target { outline: 2px solid #64748b; }
-.account-grid { display: grid; grid-template-columns: minmax(280px, .85fr) minmax(0, 2fr); gap: 1rem; height: calc(100dvh - 180px); min-height: 480px; }
-.account-list, .account-workspace { display: flex; flex-direction: column; overflow: hidden; }
-.account-list-scroll, .workspace-content { overflow-y: auto; flex: 1; min-height: 0; overflow-wrap: anywhere; }
-.account-select { border-radius: .5rem; }
-.mobile-back { display: none; }
-.message-preview { display: flex; align-items: flex-start; gap: 1rem; font-size: .875rem; list-style: none; }
-.message-preview > span:first-child { flex: 1; }
-.chevron { flex-shrink: 0; display: inline-block; transition: transform .15s; }
-details[open] > summary .chevron { transform: rotate(180deg); }
-.modal { width: min(600px, calc(100vw - 2rem)); max-height: calc(100dvh - 2rem); border: 0; padding: 1.5rem; border-radius: .75rem; background: #fff; color: #0f172a; box-shadow: 0 24px 80px #0003; }
-.dark .modal { background: #1e293b; color: #f1f5f9; }
-.modal::backdrop { background: rgb(15 23 42 / .5); }
-@media (max-width: 767px) {
-  nav { flex-wrap: wrap; gap: .75rem; }
-  .nav-content { display: contents; }
-  .main-links { order: 3; width: 100%; justify-content: space-between; }
-  .nav-link { padding: .5rem; }
-  .task-grid { grid-template-columns: minmax(0, 1fr); }
-  .account-grid { grid-template-columns: minmax(0, 1fr); height: auto; min-height: calc(100dvh - 230px); }
-  .account-workspace { display: none; }
-  .has-selection .account-list { display: none; }
-  .has-selection .account-workspace { display: flex; }
-  .account-list-scroll, .workspace-content { overflow: visible; }
-  .mobile-back { display: inline-block; }
-  .tabs { gap: 1rem; padding: 0 1rem; }
-  .workspace-content { padding: 1rem; }
+*::-webkit-scrollbar-track {
+  background: color-mix(in srgb, var(--surface-soft) 88%, transparent);
+  border-radius: 999px;
 }
-@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: 0s !important; scroll-behavior: auto !important; } }
+
+*::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--accent) 72%, var(--text-muted) 28%),
+    color-mix(in srgb, var(--accent) 48%, var(--border-soft) 52%)
+  );
+  border: 2px solid color-mix(in srgb, var(--surface) 92%, transparent);
+  border-radius: 999px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 70%, var(--text-main) 30%));
+}
+
+*::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+input[type="checkbox"] {
+  accent-color: var(--accent);
+}
+
+.focus-ring {
+  @apply focus:outline-none focus:ring-2 focus:ring-offset-2;
+  --tw-ring-color: var(--accent);
+}
+
+.accent-gradient {
+  background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 70%, #ffffff 30%));
+  color: var(--accent-contrast) !important;
+}
+
+.logo-backdrop {
+  background:
+    radial-gradient(circle at 35% 25%, color-mix(in srgb, var(--accent-soft) 80%, #ffffff 20%), transparent 58%),
+    linear-gradient(145deg, color-mix(in srgb, var(--accent-soft) 85%, #ffffff 15%), var(--surface));
+}
+
+:root[data-theme="dark"] .logo-backdrop {
+  background:
+    radial-gradient(circle at 35% 25%, color-mix(in srgb, var(--accent) 32%, transparent), transparent 58%),
+    linear-gradient(145deg, color-mix(in srgb, var(--surface-soft) 78%, var(--accent) 22%), var(--surface));
+}
+
+.sidebar-label {
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+
+.sidebar:is(:hover, :has(:focus-visible)) {
+  width: 15rem;
+}
+
+.sidebar:is(:hover, :has(:focus-visible)) .sidebar-label {
+  opacity: 1;
+  transition-delay: 80ms;
+}
+
+.app-select-trigger,
+.app-menu {
+  color: var(--text-main);
+  background-color: var(--surface);
+  border-color: var(--border-soft);
+}
+
+.app-select-trigger:hover,
+.app-menu-option:hover,
+.app-menu-option:focus-visible {
+  background-color: var(--surface-soft);
+}
+
+.app-select-trigger.app-select-compact {
+  background-color: transparent;
+  border-color: transparent;
+}
+
+.app-menu-option[aria-selected="true"] {
+  color: var(--accent);
+  background-color: color-mix(in srgb, var(--accent-soft) 58%, var(--surface) 42%);
+}
+
+.aar-entry-cell {
+  background-color: #e9f4ff;
+}
+
+.aar-goals-panel {
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--accent) 34%, var(--border-soft) 66%);
+  border-radius: 0.625rem;
+  background: color-mix(in srgb, var(--accent-soft) 24%, var(--surface) 76%);
+  box-shadow:
+    0 8px 22px rgb(30 41 59 / 0.12),
+    inset 0 3px 0 color-mix(in srgb, var(--accent) 70%, transparent);
+}
+
+.aar-table-shell {
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--border-soft) 70%);
+  background-color: var(--surface);
+  box-shadow:
+    0 10px 26px rgb(30 41 59 / 0.14),
+    0 2px 5px rgb(30 41 59 / 0.08);
+}
+
+.aar-page-panel {
+  padding: 1rem;
+  border: 1px solid color-mix(in srgb, var(--accent) 22%, var(--border-soft) 78%);
+  border-radius: 0.75rem;
+  background: color-mix(in srgb, var(--surface) 97%, var(--accent-soft) 3%);
+  box-shadow:
+    0 18px 48px rgb(30 41 59 / 0.18),
+    0 2px 8px rgb(30 41 59 / 0.1),
+    inset 0 1px 0 rgb(255 255 255 / 0.7);
+}
+
+:root[data-theme="dark"] .aar-page-panel {
+  border-color: color-mix(in srgb, var(--accent) 28%, var(--border-soft) 72%);
+  background: color-mix(in srgb, var(--surface) 97%, #ffffff 3%);
+  box-shadow:
+    0 22px 56px rgb(0 0 0 / 0.52),
+    0 0 0 1px rgb(255 255 255 / 0.035),
+    inset 0 1px 0 rgb(255 255 255 / 0.055);
+}
+
+:root[data-theme="dark"] .aar-goals-panel {
+  border-color: color-mix(in srgb, var(--accent-glow) 42%, var(--border-soft) 58%);
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface) 88%);
+  box-shadow:
+    0 12px 30px rgb(0 0 0 / 0.34),
+    inset 0 3px 0 color-mix(in srgb, var(--accent-glow) 72%, transparent);
+}
+
+:root[data-theme="dark"] .aar-table-shell {
+  border-color: color-mix(in srgb, var(--accent-glow) 34%, var(--border-soft) 66%);
+  background-color: color-mix(in srgb, var(--surface) 96%, #ffffff 4%);
+  box-shadow:
+    0 14px 34px rgb(0 0 0 / 0.4),
+    0 0 0 1px rgb(255 255 255 / 0.025);
+}
+
+:root[data-theme="dark"] .aar-entry-cell {
+  background-color: color-mix(in srgb, #1d4f75 42%, var(--surface) 58%);
+}
+
+.aar-entry-cell .aar-input {
+  color: var(--text-main);
+  background-color: transparent !important;
+}
+
+.aar-entry-cell .aar-input:hover,
+.aar-entry-cell .aar-input:focus {
+  border-color: color-mix(in srgb, var(--accent) 65%, var(--border-soft) 35%);
+  background-color: color-mix(in srgb, var(--surface) 72%, transparent) !important;
+}
+
+.aar-goal-cell .aar-input {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.aar-section-heading {
+  color: var(--accent);
+}
+
+.aar-report-head {
+  color: color-mix(in srgb, var(--accent) 72%, var(--text-main) 28%);
+  background-color: color-mix(in srgb, var(--accent-soft) 62%, var(--surface) 38%);
+  border-bottom: 2px solid color-mix(in srgb, var(--accent) 44%, var(--border-soft) 56%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.58);
+}
+
+:root[data-theme="dark"] .aar-report-head {
+  color: color-mix(in srgb, var(--accent-glow) 64%, var(--text-main) 36%);
+  background-color: color-mix(in srgb, var(--accent) 22%, var(--surface-soft) 78%);
+  border-bottom-color: color-mix(in srgb, var(--accent-glow) 48%, var(--border-soft) 52%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.06);
+}
+
+.aar-export-offscreen {
+  position: fixed;
+  top: 0;
+  left: -10000px;
+  width: 1200px;
+  pointer-events: none;
+}
+
+.aar-export-sheet {
+  width: 1200px;
+  padding: 28px;
+  color: #172033;
+  background: #ffffff;
+}
+
+.aar-export-sheet .aar-entry-cell {
+  background-color: #e9f4ff !important;
+}
+
+.aar-export-table {
+  border: 1px solid #e2e8f0;
+}
+
+body {
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--accent) var(--background-accent-start), var(--app-bg)) 0%,
+      color-mix(in srgb, var(--accent) var(--background-accent-middle), var(--app-bg)) 46%,
+      color-mix(in srgb, var(--accent) var(--background-accent-end), var(--app-bg)) 100%
+    );
+}
+
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+
+body::before {
+  z-index: -2;
+  opacity: var(--panel-opacity);
+  background: var(--panel-image) 0 0 / var(--honeycomb-width) var(--honeycomb-height) repeat;
+}
+
+body::after {
+  z-index: -1;
+  opacity: var(--neon-opacity);
+  background: linear-gradient(
+    125deg,
+    var(--accent-glow) 0%,
+    color-mix(in srgb, var(--accent-glow) 65%, #ffffff) 38%,
+    var(--accent-glow) 65%,
+    color-mix(in srgb, var(--accent-glow) 75%, #ff9a32) 100%
+  );
+  mask-image: url("/honeycomb-neon.svg"), linear-gradient(180deg, rgb(0 0 0 / .12), #000 35%, #000 55%, rgb(0 0 0 / .12));
+  mask-size: calc(var(--honeycomb-width) * 4) calc(var(--honeycomb-height) * 4), 100% 100%;
+  mask-repeat: repeat, no-repeat;
+  mask-composite: intersect;
+}
+
+.theme-shell {
+  position: relative;
+  isolation: isolate;
+}
+
+.theme-shell::before {
+  content: "";
+  position: fixed;
+  z-index: -1;
+  inset: -22vh -18vw;
+  pointer-events: none;
+  opacity: var(--wave-opacity);
+  background:
+    repeating-radial-gradient(
+      ellipse 86% 30% at -8% 8%,
+      transparent 0 105px,
+      color-mix(in srgb, var(--accent-glow) 24%, transparent) 132px,
+      var(--wave-highlight) 145px,
+      transparent 182px
+    ),
+    repeating-radial-gradient(
+      ellipse 82% 32% at 108% 72%,
+      transparent 0 128px,
+      color-mix(in srgb, var(--accent-glow) 18%, transparent) 154px,
+      transparent 205px
+    );
+  filter: blur(18px);
+  transform: rotate(-4deg) scale(1.08);
+}
+
+.accent-divider {
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--accent), transparent);
+}
+
+.selected-row {
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--accent-soft) 88%, var(--surface) 12%), color-mix(in srgb, var(--accent-soft) 55%, var(--surface) 45%)) !important;
+}
+
+:root[data-theme="dark"] .selected-row {
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--accent) 30%, var(--surface) 70%), color-mix(in srgb, var(--accent) 16%, var(--surface) 84%)) !important;
+}
+
+.selected-row input,
+.selected-row select,
+.selected-row button {
+  color: var(--text-main) !important;
+}
+
+.data-row:hover input,
+.data-row:hover select,
+.data-row:hover button {
+  color: var(--text-main) !important;
+}
+
+.data-row:hover .date-edit-control,
+.selected-row .date-edit-control {
+  color: var(--text-main) !important;
+  background-color: color-mix(in srgb, var(--surface) 82%, transparent) !important;
+}
+
+:root[data-theme="dark"] .data-row:hover .date-edit-control {
+  color: var(--text-main) !important;
+  background-color: color-mix(in srgb, var(--surface) 86%, #ffffff 6%) !important;
+}
+
+.selected-row input,
+.selected-row select {
+  background-color: color-mix(in srgb, var(--surface) 78%, transparent) !important;
+}
+
+.status-row-clean {
+  background-color: color-mix(in srgb, #dcfce7 78%, var(--surface) 22%);
+}
+
+.status-row-pipeline {
+  background-color: color-mix(in srgb, #dbeafe 78%, var(--surface) 22%);
+}
+
+.status-row-duplicate,
+.icm-cell-pending {
+  background-color: color-mix(in srgb, #fef3c7 82%, var(--surface) 18%);
+}
+
+.icm-cell-no {
+  background-color: color-mix(in srgb, #fee2e2 82%, var(--surface) 18%);
+}
+
+.icm-cell-yes {
+  background-color: color-mix(in srgb, #dcfce7 82%, var(--surface) 18%);
+}
+
+.status-row-clean input,
+.status-row-clean select,
+.status-row-pipeline input,
+.status-row-pipeline select,
+.status-row-duplicate input,
+.status-row-duplicate select,
+.icm-cell-pending select,
+.icm-cell-no select,
+.icm-cell-yes select {
+  background-color: transparent !important;
+}
+
+:root[data-theme="dark"] .status-row-clean,
+:root[data-theme="dark"] .icm-cell-yes {
+  background-color: color-mix(in srgb, #10b981 23%, var(--surface) 77%);
+  box-shadow: inset 3px 0 0 color-mix(in srgb, #34d399 78%, var(--accent) 22%);
+}
+
+:root[data-theme="dark"] .status-row-pipeline {
+  background-color: color-mix(in srgb, #2563eb 22%, var(--surface) 78%);
+  box-shadow: inset 3px 0 0 color-mix(in srgb, #60a5fa 75%, var(--accent) 25%);
+}
+
+:root[data-theme="dark"] .status-row-duplicate,
+:root[data-theme="dark"] .icm-cell-pending {
+  background-color: color-mix(in srgb, #d97706 22%, var(--surface) 78%);
+  box-shadow: inset 3px 0 0 #fbbf24;
+}
+
+:root[data-theme="dark"] .icm-cell-no {
+  background-color: color-mix(in srgb, #dc2626 22%, var(--surface) 78%);
+  box-shadow: inset 3px 0 0 #f87171;
+}
+
+.bg-slate-50,
+.bg-slate-100 {
+  background-color: var(--surface-soft) !important;
+}
+
+.bg-white,
+.bg-white\/95 {
+  background-color: color-mix(in srgb, var(--surface) 98%, transparent) !important;
+}
+
+:root[data-theme="dark"] .bg-white,
+:root[data-theme="dark"] .bg-white\/95 {
+  background-color: color-mix(in srgb, var(--surface) 96%, #ffffff 4%) !important;
+}
+
+.border-slate-200,
+.border-slate-100 {
+  border-color: var(--border-soft) !important;
+}
+
+.text-slate-950,
+.text-slate-900,
+.text-slate-800,
+.text-slate-700 {
+  color: var(--text-main) !important;
+}
+
+.text-slate-600,
+.text-slate-500,
+.text-slate-400 {
+  color: var(--text-muted) !important;
+}
+
+.bg-sky-600,
+.hover\:bg-sky-700:hover {
+  background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 78%, #111827 22%)) !important;
+  color: var(--accent-contrast) !important;
+}
+
+.text-sky-700,
+.hover\:text-sky-600:hover {
+  color: var(--accent) !important;
+}
+
+.bg-sky-50 {
+  background-color: var(--accent-soft) !important;
+}
+
+:root[data-theme="dark"] input:not([type="checkbox"]):not(.bg-transparent):not(.aar-input),
+:root[data-theme="dark"] textarea:not(.bg-transparent),
+:root[data-theme="dark"] select {
+  color: var(--text-main);
+  background-color: color-mix(in srgb, var(--surface-soft) 82%, var(--surface) 18%);
+  border-color: var(--border-soft);
+}
+
+:root[data-theme="dark"] input.bg-transparent,
+:root[data-theme="dark"] textarea.bg-transparent,
+:root[data-theme="dark"] .aar-input {
+  background-color: transparent !important;
+  border-color: transparent;
+}
+
+:root[data-theme="dark"] input[type="checkbox"] {
+  color-scheme: dark;
+  background-color: #0c1521;
+  border-color: #60728a;
+}
+
+:root[data-theme="dark"] .data-row:not(.selected-row):not(.status-row-clean):not(.status-row-pipeline):not(.status-row-duplicate):hover {
+  background-color: color-mix(in srgb, var(--accent) 12%, var(--surface) 88%) !important;
+}
+
+:root[data-theme="dark"] .status-row-clean:hover {
+  background-color: color-mix(in srgb, #10b981 29%, var(--surface) 71%);
+}
+
+:root[data-theme="dark"] .status-row-pipeline:hover {
+  background-color: color-mix(in srgb, #2563eb 28%, var(--surface) 72%);
+}
+
+:root[data-theme="dark"] .status-row-duplicate:hover {
+  background-color: color-mix(in srgb, #d97706 28%, var(--surface) 72%);
+}
+
+:root[data-theme="dark"] thead.bg-slate-50 {
+  background-color: color-mix(in srgb, var(--surface-soft) 88%, var(--accent) 12%) !important;
+}
+
+:root[data-theme="dark"] .shadow-sm,
+:root[data-theme="dark"] .shadow-xl {
+  box-shadow: 0 16px 40px rgb(0 0 0 / 0.32), 0 0 0 1px rgb(255 255 255 / 0.025);
+}
+
+:root:not([data-theme="dark"]) .shadow-sm {
+  box-shadow: 0 8px 24px rgb(30 41 59 / 0.1), 0 1px 3px rgb(30 41 59 / 0.08);
+}
+
+:root:not([data-theme="dark"]) .shadow-xl {
+  box-shadow: 0 20px 50px rgb(30 41 59 / 0.16), 0 4px 12px rgb(30 41 59 / 0.1);
+}

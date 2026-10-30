@@ -1,6 +1,9 @@
+import { Button } from "./components/Button";
 import { useEffect } from 'react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
-import Layout from './components/Layout';
+import { AppLayout as Layout } from './layouts/AppLayout';
+import { ThemeProvider } from './context/ThemeContext';
+import { PageHeader } from './components/PageHeader';
 import { store, useWorkspace } from './data/react';
 import TasksPage from './pages/TasksPage';
 import AccountsPage from './pages/AccountsPage';
@@ -18,10 +21,10 @@ function Workspace() {
     refresh(); window.addEventListener('focus', refresh); document.addEventListener('visibilitychange', refresh);
     return () => { clearTimeout(timer); window.removeEventListener('focus', refresh); document.removeEventListener('visibilitychange', refresh); };
   }, []);
-  return <Layout>{store.error && <div role="alert" className="storage-error mb-4">{store.error}<button className="btn ml-3" onClick={store.retrySave}>Retry saving</button></div>}<Routes>
-    <Route path="/" element={<div className="panel p-4"><h1 className="text-xl font-semibold">Home</h1><p className="muted text-sm mt-1">Your BDR workspace.</p></div>} />
+  return <Layout>{store.error && <div role="alert" className="storage-error mb-4">{store.error}<Button variant="secondary" className="ml-3" onClick={store.retrySave}>Retry saving</Button></div>}<Routes>
+    <Route path="/" element={<PageHeader title="Home" description="Your BDR workspace." />} />
     <Route path="/tasks" element={<TasksPage />} /><Route path="/accounts" element={<AccountsPage />} />
     <Route path="/settings" element={<SettingsPage />} /><Route path="*" element={<Navigate to="/" replace />} />
   </Routes></Layout>;
 }
-export default function App() { return <BrowserRouter><Workspace /></BrowserRouter>; }
+export default function App() { return <BrowserRouter><ThemeProvider><Workspace /></ThemeProvider></BrowserRouter>; }

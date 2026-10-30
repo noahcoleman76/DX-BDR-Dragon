@@ -1,102 +1,112 @@
-# BDR Workspace — implementation checkpoint
+# BDR Dragon Workspace
 
-The account/task implementation is working and verified. **Final design integration is pending the newer BDR Dragon source that the user is providing.** This checkpoint uses the older public source only as an interim shell. It is not a claim that the newer design or Settings page has been preserved.
+A separate, working BDR workspace based on [SDR-Metrics](https://github.com/noahcoleman76/SDR-Metrics), inspected at commit `40bc948502588815d444d13c7716b60d0d5680d7`. The original repository and production deployment were not modified.
 
-## Run locally
+The new source destination is [DX-BDR-Dragon](https://github.com/noahcoleman76/DX-BDR-Dragon). This directory is an independent frontend project and Git repository. It contains no original backend, authentication provider, credentials, API integration, or Vercel project identity.
 
-Use Node.js 24 and npm in this directory:
+## Start locally
+
+Use Node.js 24 (also specified in `.nvmrc`):
 
 ```powershell
 npm ci
 npm run dev
 ```
 
-Verification commands:
+The app opens without authentication, API keys or a database. It starts with no accounts, contacts, messages or tasks.
 
 ```powershell
 npm run build
 npm run lint
 npm test
+npm run preview
 ```
 
-## Implemented behavior
+The build outputs `dist/`. The lockfile records the verified dependency versions.
 
-- Four routes: Home, Tasks, Accounts, Settings. Home is intentionally minimal.
-- Daily tasks reset on the browser's next local calendar date; weekly tasks reset Monday. Reset checks run on load, focus, visibility changes, at midnight, and while the app remains open.
-- One shared task collection powers main Ad Hoc Tasks and account task subsets. Creation, completion, reopening, edits, deletion and ordering use stable IDs and the same store operations.
-- Pointer drag handles and keyboard-accessible up/down controls change the same persisted order. Completed ad hoc tasks have a completion timestamp and Reopen action.
-- Accounts have name-only creation, optional owner/links, combined name search and owner filtering, expandable links, and persistent owner accent colors.
-- Overview fields save on blur and before unmount or browser unload. Updates merge individual fields into the latest stored record. Account and contact date pickers have been verified through refresh.
-- Account and contact messages are separate collections, ordered Current/Previous, Email/LinkedIn/Call Script, then newest first. Filtering does not mutate stored order.
-- Expandable contacts support inline edits, notes, dates and personal message templates.
-- Destructive actions require an in-app confirmation. Deleting a contact removes its personal messages. Deleting an account removes its contacts and account/contact messages, while keeping associated tasks as unassigned tasks. The confirmation explains this policy.
-- The app starts empty. No sample accounts or runtime records are embedded in the source.
+## What was retained from SDR-Metrics
 
-## Data storage
+- React, TypeScript, Vite, React Router, Tailwind CSS, Lucide icons, clsx, dnd-kit and Oxlint.
+- The actual expanding sidebar and mobile navigation implementation, adapted to exactly Home, Tasks, Accounts and Settings. Removed navigation and backend features are not linked or mounted.
+- Original dragon branding assets, theme-specific logos, honeycomb textures, background effects, fonts, colors, surface styling, borders, spacing, hover effects and theme tokens.
+- The actual `ThemeProvider`, `BrandLogo`, `Button`, `PageHeader`, `AppSelect`, `Modal`, `ConfirmDialog` and `DraggableRow` implementations. Dialogs gained native focus containment and Escape support; dropdown menus can render inside a dialog; drag handles gained accessible labels and touch behavior.
+- The actual Settings appearance section, including all 22 accent choices in Basic, Jewel, Neon and Soft groups, and the logo-based light/dark switch. Theme and accent persistence use the original implementation.
+- Inline fields were extended for multiline text, editable dates, field-level updates, draft retention and safe blur/unmount saves. The Accounts workflow needs capabilities beyond the original simple inline text field.
 
-`src/data/store.ts` defines a central `WorkspaceStore` and a replaceable `Persistence` interface. `LocalPersistence` serializes a versioned workspace under `bdr-workspace:v1` in localStorage. There is no API, shared database, authentication or connection to the original backend.
+The original client is organized as a standalone frontend here; its Express/Prisma backend is unnecessary for this browser-local prototype. Unused spreadsheet import/export and reporting dependencies were excluded.
 
-Records belong to this browser profile and site origin. Local development and a deployed URL have separate storage. Clearing browser site data removes records. Open the workspace in one tab while editing; simultaneous editing in multiple tabs is not coordinated in this prototype. Storage write failures retain edits in memory and display a retry warning. Unreadable or unrecognized stored data is preserved instead of overwritten.
+## Settings dependency that is deliberately excluded
 
-## Inspected source and isolation
+The original Settings page also has a Change password form. It calls the authenticated `/auth/change-password` endpoint and depends on the original login/session backend. The brief explicitly excludes authentication and password management, so that form and its API dependencies are not included. The original appearance section, layout, theme controls and all accent options remain functional. No broken password button or mock password service was substituted.
 
-Interim source: https://github.com/noahcoleman76/BDR-Dragon at `705fde0737ff59a9b79587449b9f292a65233227`.
+## Features
 
-The source was cloned read-only into the task's work directory. This application has its own local Git repository, no remote pointing to the original, no Vercel project link, no copied environment file, and no original deployment scripts. Nothing was pushed to or deployed over the original.
+**Home:** a minimal placeholder using the retained page header and app shell.
 
-The inspected version uses React 19, Vite, TypeScript, React Router, Tailwind CSS and ESLint. `Layout.tsx`, `DarkModeToggle.tsx`, `main.tsx` and the Tailwind foundation were retained; navigation was adapted to four routes. No new runtime libraries were added.
+**Tasks:** Daily Recurring Tasks, Weekly Recurring Tasks and Ad Hoc Tasks support creation, notes, editing, deletion, completion and manual ordering. Daily tasks reset on the next local calendar day; weekly tasks reset Monday. Checks run on load, focus, visibility changes, at midnight and periodically while open. Completed recurring tasks remain visible until their period ends. Ad hoc tasks never reset; completed tasks show their completion date and can be reopened at the top of the open list.
 
-**Source mismatch:** that older version has Dashboard, Forecast, Tasks, Market, Account and Admin routes. It has no Settings route or Opportunities entry and no custom logo asset in use; its branding is the text “BDR Dragon”. Its Account page depends on `/users/me` and `/auth/change-password` for user identity, quotas and password management. Those dependencies are excluded from this local, unauthenticated prototype. `SettingsPage.tsx` is an interim preferences placeholder, not the requested Settings implementation. It must be replaced after the newer source arrives.
+**Accounts:** a narrow, independently scrollable account list and wider workspace; name search and owner filtering work together. Accounts can be created with only a name. Owner accents are persistent and consistent, and unassigned accounts stay neutral. Account links expand independently of selection. On mobile, a Back control switches between the list and account workspace.
 
-## Files
+**Overview:** editable website/CRM links, optional Last Worked date, Company Description and Notes. Fields save on blur, before unmount and before browser unload. Field-level patches merge into the latest record. Editing other fields does not change Last Worked. Account and contact date pickers were verified through refresh.
 
-- `src/data/model.ts`: record schemas, local recurrence periods, sorting, owners and URL handling.
-- `src/data/store.ts`: shared state, persistence adapter, record operations and ordering.
-- `src/data/react.ts`: React subscription to the shared store.
-- `src/components/UI.tsx`: modal, confirmation, form, autosave and link controls.
-- `src/components/TaskList.tsx`: shared task editor and task views.
-- `src/components/Messages.tsx`: reusable account/contact messaging.
-- `src/components/Contacts.tsx`: contact details and personal messages.
-- `src/pages/TasksPage.tsx`, `AccountsPage.tsx`, `SettingsPage.tsx`: workspace pages.
-- `src/App.tsx`, `components/NavBar.tsx`, `index.css`: routes, recurrence scheduler and interim shell integration.
-- `vite.config.ts`, `vercel.json`, `index.html`, `package.json`, `package-lock.json`: independent build and deployment configuration.
-- `tests/workspace.test.ts`: 18 focused data-layer tests.
+**Messaging:** account templates and contact templates remain separate. Each supports Email, LinkedIn and Call Script, Current/Previous status, filtering, expandable full text, editing and confirmed deletion. Ordering is Current first, then type order, then newest within each group. Line breaks are retained.
 
-## Verification completed on this checkpoint
+**Contacts:** expandable cards, editable name/title/links/date, blur-saved notes and personal messaging.
 
-- Production build: passed, including TypeScript checking.
-- ESLint: passed with no errors or warnings.
-- Automated tests: 18 passed, 0 failed. Also run with `TZ=America/Denver`.
-- Browser: name-only/full account creation; owner color changes; combined owner/search filtering; expanded account links; all account tabs; Overview blur saves and refresh; account switching; account and contact date persistence; message type/status ordering and filtering; contact details and isolated personal messages; task creation from an account; completion on Tasks; reopening from the account; shared notes edits; daily completion after refresh; pointer drag and arrow ordering after refresh; explicit deletion policy and confirmations.
-- Mobile: 390 × 844 viewport; account list/detail switch works; document width matched content width without horizontal overflow.
-- Browser console: no errors observed during the verified workflows.
-- Recurrence date boundaries, Monday, year/month rollover, leap day and daylight-saving dates are covered by automated tests with an injected clock. The machine clock was not changed.
-- Original cloned source: clean; no original deployment actions performed.
+**Account tasks:** the same ad hoc task records displayed on Tasks, related through `accountId`. Notes initially contain the account name and can be changed or removed. Completion, reopening, edits, deletion and ordering are synchronized through one store. The account view is a subset of the global task order. Pointer drag and up/down buttons both update that order.
 
-The build emitted an advisory about the age of the bundled Browserslist compatibility data. It did not fail the build.
+**Deletion policy:** every destructive action asks for confirmation. Deleting a contact removes its personal messages. Deleting an account removes its contacts and account/contact messages; its tasks are retained as unassigned tasks on the main Tasks page. The confirmation explicitly states these consequences.
 
-## Separate Vercel deployment, after final source integration
+## Storage and migration boundary
 
-Vercel is not connected in the current session; no production URL has been created. Do not deploy this checkpoint as the final application until the newer design and Settings implementation have been integrated.
+`src/data/model.ts` defines Account, Contact, Message and Task records with stable UUIDs and timestamps. `WorkspaceStore` in `src/data/store.ts` is the sole shared state layer. The `Persistence` interface isolates storage access; `LocalPersistence` serializes versioned records under `bdr-workspace:v1` in localStorage.
 
-1. Create a new empty GitHub repository named `bdr-workspace` (or another new name). Push this app directory as its root. Do not set the original BDR Dragon repository as this project's remote.
-2. In Vercel, create a **new project** and import the new repository. Use the repository root, Vite preset, `npm run build`, and output directory `dist`. No environment variables or database setup are required.
-3. Deploy the new project. The included `vercel.json` supplies SPA route fallback so `/tasks`, `/accounts`, and `/settings` support direct navigation and refresh.
-4. Recheck creation, refresh persistence and task synchronization on the new origin. Local preview records do not move automatically to that origin.
+All changes persist across route changes and refreshes. Recurring completion has a local calendar period key, separate from permanent ad hoc completion. Owner color assignments and task sort order are persisted. Storage write failures keep edits in memory and show a retry warning. Unreadable stored data is preserved instead of overwritten.
 
-Alternatively, from this directory, use `npx vercel` and choose **not to link to an existing project**; give the new project a unique name. After verifying the preview and new project identity, run `npx vercel --prod`.
+Data belongs to the browser profile and site origin. Local development and a deployed URL have separate records. Clearing site data removes those records. There is no cross-device or simultaneous multi-tab editing coordination in this prototype. A future authenticated database can replace the persistence boundary while keeping the UI and task relationships.
 
-Official references: [Vite on Vercel](https://vercel.com/docs/frameworks/frontend/vite), [CLI project deployment](https://vercel.com/docs/projects/deploy-from-cli), [project linking](https://vercel.com/docs/cli/project-linking).
+## File summary
 
-## Future improvements, not implemented
+| Area | Files and purpose |
+| --- | --- |
+| Retained shell and theme | `src/layouts/AppLayout.tsx`, `src/context/ThemeContext.tsx`, `src/components/BrandLogo.tsx`, `src/index.css`, `public/` |
+| Retained/adapted UI | `Button.tsx`, `PageHeader.tsx`, `AppSelect.tsx`, `Modal.tsx`, `ConfirmDialog.tsx`, `DraggableRow.tsx`, `InlineField.tsx` in `src/components/` |
+| Shared data | `src/data/model.ts`, `store.ts`, `react.ts`: models, local persistence, shared operations, React subscription |
+| New workflows | `src/pages/AccountsPage.tsx`, `TasksPage.tsx`; `src/components/Contacts.tsx`, `Messages.tsx`, `TaskList.tsx`, `UI.tsx` |
+| Settings | `src/pages/SettingsPage.tsx`: retained appearance implementation; password form excluded as described above |
+| Routes and styling | `src/App.tsx`, `src/workspace.css`: four routes, recurrence scheduler, workspace extensions to the retained design tokens |
+| Build and deployment | `package.json`, `package-lock.json`, `vite.config.ts`, `vercel.json`, `index.html`, `.nvmrc`, `.vercelignore`, TypeScript configuration |
+| Verification | `tests/workspace.test.ts`, `VERIFICATION.md` |
 
-- Authenticated database persistence behind the existing adapter boundary.
-- Explicit workspace export/import and backup recovery.
-- Coordination for simultaneous tabs or multiple devices.
+## Verification
 
-Next required input: the newer BDR Dragon repository or project URL, to inspect its real shell, assets, shared components, responsive behavior and Settings dependencies before final integration.
+Production build and TypeScript checking passed. Oxlint passed. All 18 automated tests passed, including a run with `TZ=America/Denver`. Browser checks covered account CRUD, filtering, autosave and dates, account/contact messaging, shared task transitions and persistent ordering, the actual Settings controls, and desktop/mobile layouts. See [VERIFICATION.md](VERIFICATION.md) for evidence and limits.
 
-## Newer repository check
+## Deploy as a separate Vercel project
 
-The subsequently supplied https://github.com/noahcoleman76/DX-BDR-Dragon repository was inspected read-only. GitHub reported size 0; cloning yielded an empty repository, and git ls-remote returned no commits or branch refs. No files were pushed to it. Final shell and Settings integration awaits source files or a populated source repository.
+Vercel is not connected in the current session, so no Vercel production deployment has been created.
 
+1. In Vercel, select **Add New → Project** and import **noahcoleman76/DX-BDR-Dragon**. Create a new project named `dx-bdr-workspace` or another unused name. Do not import or link the SDR-Metrics production project.
+2. Use the repository root as Root Directory, **Vite** as Framework Preset, Node.js **24.x**, install command `npm ci`, build command `npm run build`, and output directory `dist`.
+3. No environment variables, database or authentication setup are required. The included `vercel.json` retains the source app's SPA rewrite for direct navigation and refresh on `/tasks`, `/accounts` and `/settings`.
+4. Deploy the new project. Check account creation, refresh persistence and task synchronization on the new URL. Browser-local preview records do not automatically transfer to that origin.
+
+Alternatively, from this directory:
+
+```powershell
+npx vercel
+```
+
+Choose **N** when asked whether to link to an existing project, then name the new project. After verifying its identity and preview:
+
+```powershell
+npx vercel --prod
+```
+
+Official references: [Vite on Vercel](https://vercel.com/docs/frameworks/frontend/vite), [CLI deployment](https://vercel.com/docs/projects/deploy-from-cli), [project linking](https://vercel.com/docs/cli/project-linking).
+
+## Logical future improvements — not implemented
+
+- Authenticated database persistence behind the existing storage boundary.
+- Workspace export/import and backup recovery.
+- Coordinated editing across tabs and devices.
