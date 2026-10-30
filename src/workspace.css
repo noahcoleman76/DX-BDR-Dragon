@@ -28,6 +28,8 @@
 .link:hover { opacity: .75; }
 :root[data-theme="dark"] .link { color: color-mix(in srgb, var(--accent-glow) 70%, var(--text-main) 30%); }
 .record-card, .task-card { border-radius: .5rem; border: 1px solid var(--border-soft); padding: 1rem; background: var(--surface); }
+.contact-list-item { display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 1rem; text-align: left; transition: background-color .15s; }
+.contact-list-item:hover { background: var(--surface-soft); }
 .task-content { padding: .4rem .25rem; min-width: 0; font-size: .875rem; }
 .section-label { font-size: .875rem; font-weight: 600; color: var(--text-main); }
 .count { font-size: .75rem; font-weight: 400; color: var(--text-muted); margin-left: .25rem; }

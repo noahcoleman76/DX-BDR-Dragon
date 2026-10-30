@@ -53,7 +53,7 @@ The original Settings page also has a Change password form. It calls the authent
 
 **Messaging:** account templates and contact templates remain separate. Each supports Email, LinkedIn and Call Script, Current/Previous status, filtering, expandable full text, editing and confirmed deletion. Ordering is Current first, then type order, then newest within each group. Line breaks are retained.
 
-**Contacts:** expandable cards, editable name/title/links/date, blur-saved notes and personal messaging.
+**Contacts:** a compact list of names and titles opens a dedicated contact detail view within the account's Contacts tab. Back to contacts returns to the list. Each detail view keeps editable name/title/links/date, blur-saved notes and personal messaging together. Newly created contacts open directly in their detail view.
 
 **Account tasks:** the same ad hoc task records displayed on Tasks, related through `accountId`. Notes initially contain the account name and can be changed or removed. Completion, reopening, edits, deletion and drag-and-drop ordering are synchronized through one store. The account view is a subset of the global task order.
 
