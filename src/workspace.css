@@ -39,7 +39,9 @@ textarea { line-height: 1.6; }
 [hidden] { display: none !important; }
 .edit-cue { position: absolute; right: .6rem; top: .75rem; opacity: .65; pointer-events: none; }
 .field:has(input[type='date']) .edit-cue { display: none; }
-.task-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1rem; align-items: start; }
+.task-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1rem; align-items: stretch; }
+.task-column { min-height: 20rem; }
+.task-column-header { min-height: 3.5rem; }
 .task-check { width: 1rem; height: 1rem; margin-top: .15rem; flex-shrink: 0; cursor: pointer; }
 .completed .task-name { text-decoration: line-through; opacity: .55; }
 .account-grid { display: grid; grid-template-columns: minmax(290px, .8fr) minmax(0, 2fr); gap: 1rem; height: calc(100dvh - 130px); min-height: 480px; }

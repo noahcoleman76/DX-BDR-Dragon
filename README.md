@@ -45,7 +45,7 @@ The original Settings page also has a Change password form. It calls the authent
 
 **Home:** a minimal placeholder using the retained page header and app shell.
 
-**Tasks:** Daily Recurring Tasks, Weekly Recurring Tasks and Ad Hoc Tasks support creation, notes, editing, deletion, completion and manual ordering. Daily tasks reset on the next local calendar day; weekly tasks reset Monday. Checks run on load, focus, visibility changes, at midnight and periodically while open. Completed recurring tasks remain visible until their period ends. Ad hoc tasks never reset; completed tasks show their completion date and can be reopened at the top of the open list.
+**Tasks:** Daily Recurring Tasks, Weekly Recurring Tasks and To-Dos support creation, notes, editing, deletion, completion and manual ordering in equal-height columns. All completed tasks appear in a shared section below the columns, with their category and completion date. Daily tasks reset on the next local calendar day; weekly tasks reset Monday. Checks run on load, focus, visibility changes, at midnight and periodically while open. To-Dos never reset; reopening a To-Do returns it to the top of its open list.
 
 **Accounts:** a narrow, independently scrollable account list and wider workspace; name search and owner filtering work together. Accounts can be created with only a name. Owner accents are persistent and consistent, and unassigned accounts stay neutral. Account links expand independently of selection. On mobile, a Back control switches between the list and account workspace.
 
