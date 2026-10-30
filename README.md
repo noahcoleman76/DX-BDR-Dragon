@@ -95,3 +95,8 @@ Official references: [Vite on Vercel](https://vercel.com/docs/frameworks/fronten
 - Coordination for simultaneous tabs or multiple devices.
 
 Next required input: the newer BDR Dragon repository or project URL, to inspect its real shell, assets, shared components, responsive behavior and Settings dependencies before final integration.
+
+## Newer repository check
+
+The subsequently supplied https://github.com/noahcoleman76/DX-BDR-Dragon repository was inspected read-only. GitHub reported size 0; cloning yielded an empty repository, and git ls-remote returned no commits or branch refs. No files were pushed to it. Final shell and Settings integration awaits source files or a populated source repository.
+
