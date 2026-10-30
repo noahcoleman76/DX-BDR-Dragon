@@ -84,7 +84,7 @@ Production build and TypeScript checking passed. Oxlint passed. All 18 automated
 
 ## Deploy as a separate Vercel project
 
-Vercel is not connected in the current session, so no Vercel production deployment has been created.
+The Vercel project `dx-bdr-dragon` is connected to `noahcoleman76/DX-BDR-Dragon` with Node.js 24, the Vite preset, `npm ci`, `npm run build`, and `dist` output. Pushes to `main` trigger production deployments. The original SDR-Metrics project remains separate.
 
 1. In Vercel, select **Add New → Project** and import **noahcoleman76/DX-BDR-Dragon**. Create a new project named `dx-bdr-workspace` or another unused name. Do not import or link the SDR-Metrics production project.
 2. Use the repository root as Root Directory, **Vite** as Framework Preset, Node.js **24.x**, install command `npm ci`, build command `npm run build`, and output directory `dist`.
