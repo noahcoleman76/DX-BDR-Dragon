@@ -14,7 +14,7 @@ export interface Message extends RecordBase {
   accountId?: string; contactId?: string; type: MessageType; status: MessageStatus; content: string;
 }
 export interface Task extends RecordBase {
-  accountId: string | null; name: string; notes: string; category: Category;
+  accountId: string | null; name: string; notes: string; category: Category; linkUrl?: string;
   isCompleted: boolean; completedAt: string | null; sortOrder: number; completedPeriod: string | null;
 }
 export interface WorkspaceData {

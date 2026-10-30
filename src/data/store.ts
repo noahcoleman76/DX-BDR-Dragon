@@ -90,7 +90,7 @@ export class WorkspaceStore {
     const key = input.contactId ? 'contactMessages' : 'accountMessages';
     this.publish({ ...this.data, [key]: [{ ...this.base(), ...input }, ...this.data[key]] });
   }
-  addTask(input: { name: string; notes: string; category: Category; accountId?: string | null }) {
+  addTask(input: { name: string; notes: string; category: Category; accountId?: string | null; linkUrl?: string }) {
     if (!input.name.trim()) throw new Error('Task name is required.');
     if (input.accountId && (input.category !== 'adhoc' || !this.data.accounts.some(a => a.id === input.accountId))) throw new Error('Only ad hoc tasks may belong to an existing account.');
     const task: Task = { ...this.base(), ...input, name: input.name.trim(), accountId: input.accountId ?? null, isCompleted: false, completedAt: null, completedPeriod: null, sortOrder: this.topOrder(input.category) };

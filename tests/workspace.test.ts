@@ -34,6 +34,23 @@ test('account and main task views use one stable task ID through complete/edit/r
   store.update('tasks', id, { notes: 'Changed from another view' }); assert.equal(accountTasks()[0].notes, 'Changed from another view');
   store.toggleTask(id); assert.equal(accountTasks()[0].completedAt, null); assert.equal(store.getSnapshot().tasks.length, 1); store.remove('tasks', id); assert.equal(accountTasks().length, 0);
 });
+
+test('optional task links persist with existing records and can be edited or cleared', () => {
+  const { store, adapter } = setup();
+  const legacyId = store.addTask({ name: 'Existing task', notes: 'Keep notes', category: 'weekly' });
+  const linkedId = store.addTask({ name: 'Linked task', notes: '', category: 'adhoc', linkUrl: 'https://example.com/task' });
+  store.toggleTask(linkedId);
+  const reopened = new WorkspaceStore(adapter);
+  assert.equal(reopened.getSnapshot().tasks.find(t => t.id === legacyId)?.linkUrl, undefined);
+  assert.equal(reopened.getSnapshot().tasks.find(t => t.id === linkedId)?.linkUrl, 'https://example.com/task');
+  reopened.update('tasks', legacyId, { linkUrl: 'https://example.com/routine' });
+  reopened.update('tasks', linkedId, { linkUrl: '' });
+  const saved = new WorkspaceStore(adapter).getSnapshot().tasks;
+  assert.equal(saved.find(t => t.id === legacyId)?.notes, 'Keep notes');
+  assert.equal(saved.find(t => t.id === legacyId)?.linkUrl, 'https://example.com/routine');
+  assert.equal(saved.find(t => t.id === linkedId)?.linkUrl, '');
+  assert.equal(saved.find(t => t.id === linkedId)?.isCompleted, true);
+});
 test('new and reopened tasks go to top; account subset follows global reorder', () => {
   const { store, adapter } = setup(); const a = account(store); const b = account(store, 'Other');
   const one = store.addTask({ name: 'One', notes: '', category: 'adhoc', accountId: a }); const middle = store.addTask({ name: 'Middle', notes: '', category: 'adhoc', accountId: b }); const two = store.addTask({ name: 'Two', notes: '', category: 'adhoc', accountId: a });
