@@ -20,10 +20,12 @@
 .empty { padding: 3rem 1.25rem; text-align: center; }
 .empty h3 { font-size: .875rem; font-weight: 500; color: var(--text-main); }
 .empty-mark { color: var(--text-muted); opacity: .5; margin: 0 auto .75rem; }
-.account-card { border: 1px solid var(--border-soft); border-left-width: 4px; border-radius: .5rem; transition: background-color .15s; background: var(--surface); }
-.account-card.selected { background: color-mix(in srgb, var(--accent-soft) 36%, var(--surface) 64%); }
-:root[data-theme="dark"] .account-card.selected { background: color-mix(in srgb, var(--accent) 18%, var(--surface) 82%); }
-.account-card:hover { background: var(--surface-soft); }
+.account-card { border: 1px solid var(--border-soft); border-left: 4px solid var(--account-color, var(--border-soft)); border-radius: .5rem; transition: background-color .15s; background: color-mix(in srgb, var(--account-color, var(--surface)) 8%, var(--surface) 92%); }
+.account-card:hover { background: color-mix(in srgb, var(--account-color, var(--surface-soft)) 12%, var(--surface) 88%); }
+.account-card.selected { background: color-mix(in srgb, var(--account-color, var(--accent)) 16%, var(--surface) 84%); }
+:root[data-theme="dark"] .account-card { background: color-mix(in srgb, var(--account-color, var(--surface)) 14%, var(--surface) 86%); }
+:root[data-theme="dark"] .account-card:hover { background: color-mix(in srgb, var(--account-color, var(--surface-soft)) 18%, var(--surface) 82%); }
+:root[data-theme="dark"] .account-card.selected { background: color-mix(in srgb, var(--account-color, var(--accent)) 22%, var(--surface) 78%); }
 .tabs { display: flex; padding: 0 1.25rem; gap: 1.5rem; border-bottom: 1px solid var(--border-soft); }
 .tab { padding: .75rem 0; font-size: .875rem; color: var(--text-muted); border-bottom: 2px solid transparent; }
 .tab.active { color: var(--accent); border-color: var(--accent); font-weight: 600; }
