@@ -62,7 +62,8 @@ textarea { line-height: 1.6; }
 .task-column-header { min-height: 3.5rem; }
 .task-check { width: 1rem; height: 1rem; margin-top: .15rem; flex-shrink: 0; cursor: pointer; }
 .completed .task-name { text-decoration: line-through; opacity: .55; }
-.account-grid { display: grid; grid-template-columns: minmax(290px, .8fr) minmax(0, 2fr); gap: 1rem; height: calc(100dvh - 130px); min-height: 480px; }
+.account-grid { display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 1rem; height: calc(100dvh - 130px); min-height: 480px; }
+@media (min-width: 768px) { .account-list-controls { flex-direction: column; } }
 .account-list, .account-workspace { display: flex; flex-direction: column; overflow: hidden; }
 .account-list-scroll, .workspace-content { overflow-y: auto; flex: 1; min-height: 0; overflow-wrap: anywhere; }
 .account-select { border-radius: .5rem; }
