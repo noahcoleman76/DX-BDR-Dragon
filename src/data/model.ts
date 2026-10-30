@@ -21,6 +21,7 @@ export interface WorkspaceData {
   version: 1; accounts: Account[]; contacts: Contact[];
   accountMessages: Message[]; contactMessages: Message[]; tasks: Task[];
   ownerColors: Record<string, string>;
+  sdrName?: string;
 }
 export const emptyData = (): WorkspaceData => ({ version: 1, accounts: [], contacts: [], accountMessages: [], contactMessages: [], tasks: [], ownerColors: {} });
 export function localDate(date = new Date()): string {

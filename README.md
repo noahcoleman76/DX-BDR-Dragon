@@ -43,7 +43,7 @@ The original Settings page also has a Change password form. It calls the authent
 
 ## Features
 
-**Home:** a minimal placeholder using the retained page header and app shell.
+**Home:** a large, editable SDR name saved with the workspace, plus equal-size cards showing active task totals by category and account totals by Account Executive, including Unassigned. Counts come from the shared records and update as records change or recurring tasks reset.
 
 **Tasks:** Daily Recurring Tasks, Weekly Recurring Tasks and To-Dos support creation, notes, editing, deletion, completion and drag-and-drop ordering in equal-height columns. An optional task link appears as an icon that opens in a new tab. All completed tasks appear in a shared section below the columns, with their category and completion date. Daily tasks reset on the next local calendar day; weekly tasks reset Monday. Checks run on load, focus, visibility changes, at midnight and periodically while open. To-Dos never reset; reopening a To-Do returns it to the top of its open list.
 
@@ -55,7 +55,7 @@ The original Settings page also has a Change password form. It calls the authent
 
 **Contacts:** expandable cards, editable name/title/links/date, blur-saved notes and personal messaging.
 
-**Account tasks:** the same ad hoc task records displayed on Tasks, related through `accountId`. Notes initially contain the account name and can be changed or removed. Completion, reopening, edits, deletion and ordering are synchronized through one store. The account view is a subset of the global task order. Pointer drag and up/down buttons both update that order.
+**Account tasks:** the same ad hoc task records displayed on Tasks, related through `accountId`. Notes initially contain the account name and can be changed or removed. Completion, reopening, edits, deletion and drag-and-drop ordering are synchronized through one store. The account view is a subset of the global task order.
 
 **Deletion policy:** every destructive action asks for confirmation. Deleting a contact removes its personal messages. Deleting an account removes its contacts and account/contact messages; its tasks are retained as unassigned tasks on the main Tasks page. The confirmation explicitly states these consequences.
 

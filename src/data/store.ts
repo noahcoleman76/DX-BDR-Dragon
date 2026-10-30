@@ -11,7 +11,7 @@ export class LocalPersistence implements Persistence {
     const raw = this.storage.getItem(STORAGE_KEY);
     if (!raw) return null;
     const data = JSON.parse(raw) as WorkspaceData;
-    if (data.version !== 1 || arrays.some(key => !Array.isArray(data[key])) || !data.ownerColors || typeof data.ownerColors !== 'object') throw new Error('Unrecognized saved data. Existing storage has been preserved.');
+    if (data.version !== 1 || arrays.some(key => !Array.isArray(data[key])) || !data.ownerColors || typeof data.ownerColors !== 'object' || (data.sdrName !== undefined && typeof data.sdrName !== 'string')) throw new Error('Unrecognized saved data. Existing storage has been preserved.');
     for (const key of arrays) {
       if (data[key].some(row => !row || typeof row.id !== 'string' || typeof row.createdAt !== 'string' || typeof row.updatedAt !== 'string')) throw new Error('Invalid saved records. Existing storage has been preserved.');
     }
@@ -45,6 +45,10 @@ export class WorkspaceStore {
     this.listeners.forEach(listener => listener());
   }
   retrySave = () => this.publish({ ...this.data });
+  setSdrName(name: string) {
+    if (!name.trim()) throw new Error('SDR name is required.');
+    this.publish({ ...this.data, sdrName: name.trim() });
+  }
   private stamp() { return this.clock().toISOString(); }
   private base() { const now = this.stamp(); return { id: crypto.randomUUID(), createdAt: now, updatedAt: now }; }
   addAccount(input: Pick<Account, 'name' | 'websiteUrl' | 'crmUrl' | 'owner'>) {

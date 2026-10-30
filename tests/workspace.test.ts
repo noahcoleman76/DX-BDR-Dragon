@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { LocalPersistence, STORAGE_KEY, WorkspaceStore } from '../src/data/store.ts';
 import { orderedMessages, orderedTasks, ownerKey, periodFor, localDate, safeUrl } from '../src/data/model.ts';
 import type { Message } from '../src/data/model.ts';
+import { getWorkspaceSummary } from '../src/data/summary.ts';
 
 function setup(initialDate = new Date(2026, 9, 30, 12)) {
   const raw = new Map<string, string>(); let now = initialDate;
@@ -11,6 +12,42 @@ function setup(initialDate = new Date(2026, 9, 30, 12)) {
   return { raw, adapter, store, setDate: (date: Date) => { now = date; } };
 }
 const account = (store: WorkspaceStore, name = 'Test Account', owner = '') => store.addAccount({ name, owner, websiteUrl: '', crmUrl: '' });
+
+test('SDR name can be added to an existing workspace and persists without changing records', () => {
+  const { store, adapter } = setup();
+  account(store);
+  const legacy = new WorkspaceStore(adapter);
+  assert.equal(legacy.getSnapshot().sdrName, undefined);
+  const accounts = legacy.getSnapshot().accounts;
+  legacy.setSdrName('  Taylor Morgan  ');
+  assert.equal(new WorkspaceStore(adapter).getSnapshot().sdrName, 'Taylor Morgan');
+  assert.deepEqual(legacy.getSnapshot().accounts, accounts);
+  assert.throws(() => legacy.setSdrName('  '));
+  legacy.setSdrName('Taylor');
+  assert.equal(new WorkspaceStore(adapter).getSnapshot().sdrName, 'Taylor');
+});
+
+test('Home totals track active categories, executive groups, account changes and recurring resets', () => {
+  const { store, setDate } = setup();
+  assert.deepEqual(getWorkspaceSummary(store.getSnapshot()), { activeTasks: { total: 0, daily: 0, weekly: 0, adhoc: 0 }, totalAccounts: 0, accountsByExecutive: [] });
+  const firstAlex = account(store, 'One', 'Alex'); account(store, 'Two', ' alex ');
+  account(store, 'Three', 'Sam'); const unassigned = account(store, 'Four');
+  store.addTask({ name: 'Daily open', category: 'daily', notes: '' });
+  const completed = store.addTask({ name: 'Daily done', category: 'daily', notes: '' }); store.toggleTask(completed);
+  store.addTask({ name: 'Weekly', category: 'weekly', notes: '' });
+  store.addTask({ name: 'Account task', category: 'adhoc', notes: '', accountId: firstAlex });
+  const summary = getWorkspaceSummary(store.getSnapshot());
+  assert.deepEqual(summary.activeTasks, { total: 3, daily: 1, weekly: 1, adhoc: 1 });
+  assert.equal(summary.totalAccounts, 4);
+  assert.deepEqual(summary.accountsByExecutive.map(({ key, count }) => [key, count]), [['alex', 2], ['sam', 1], ['', 1]]);
+  store.update('accounts', unassigned, { owner: 'Sam' }); store.remove('accounts', firstAlex);
+  const updated = getWorkspaceSummary(store.getSnapshot());
+  assert.equal(updated.totalAccounts, 3);
+  assert.deepEqual(updated.accountsByExecutive.map(({ key, count }) => [key, count]), [['alex', 1], ['sam', 2]]);
+  assert.equal(updated.activeTasks.adhoc, 1);
+  setDate(new Date(2026, 9, 31, 0, 1)); store.refreshRecurrences();
+  assert.deepEqual(getWorkspaceSummary(store.getSnapshot()).activeTasks, { total: 4, daily: 2, weekly: 1, adhoc: 1 });
+});
 test('new workspace starts empty and accepts a name-only account', () => {
   const { store } = setup(); assert.equal(store.getSnapshot().accounts.length, 0);
   const id = account(store); assert.equal(store.getSnapshot().accounts[0].id, id); assert.equal(store.getSnapshot().accounts[0].owner, '');
