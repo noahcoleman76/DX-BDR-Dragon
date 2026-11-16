@@ -8,6 +8,7 @@ import TasksPage from './pages/TasksPage';
 import AccountsPage from './pages/AccountsPage';
 import SettingsPage from './pages/SettingsPage';
 import HomePage from './pages/HomePage';
+import CloudGate, { CloudStatusBar } from './components/CloudGate';
 
 function Workspace() {
   useWorkspace();
@@ -21,10 +22,10 @@ function Workspace() {
     refresh(); window.addEventListener('focus', refresh); document.addEventListener('visibilitychange', refresh);
     return () => { clearTimeout(timer); window.removeEventListener('focus', refresh); document.removeEventListener('visibilitychange', refresh); };
   }, []);
-  return <Layout>{store.error && <div role="alert" className="storage-error mb-4">{store.error}<Button variant="secondary" className="ml-3" onClick={store.retrySave}>Retry saving</Button></div>}<Routes>
+  return <Layout><CloudStatusBar />{store.error && <div role="alert" className="storage-error mb-4">{store.error}<Button variant="secondary" className="ml-3" onClick={store.retrySave}>Retry saving</Button></div>}<Routes>
     <Route path="/" element={<HomePage />} />
     <Route path="/tasks" element={<TasksPage />} /><Route path="/accounts" element={<AccountsPage />} />
     <Route path="/settings" element={<SettingsPage />} /><Route path="*" element={<Navigate to="/" replace />} />
   </Routes></Layout>;
 }
-export default function App() { return <BrowserRouter><ThemeProvider><Workspace /></ThemeProvider></BrowserRouter>; }
+export default function App() { return <BrowserRouter><ThemeProvider><CloudGate><Workspace /></CloudGate></ThemeProvider></BrowserRouter>; }

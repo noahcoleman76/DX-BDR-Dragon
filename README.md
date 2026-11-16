@@ -4,7 +4,7 @@
 
 A separate, working BDR workspace based on [SDR-Metrics](https://github.com/noahcoleman76/SDR-Metrics), inspected at commit `40bc948502588815d444d13c7716b60d0d5680d7`. The original repository and production deployment were not modified.
 
-The new source destination is [DX-BDR-Dragon](https://github.com/noahcoleman76/DX-BDR-Dragon). This directory is an independent frontend project and Git repository. It contains no original backend, authentication provider, credentials, API integration, or Vercel project identity.
+The new source destination is [DX-BDR-Dragon](https://github.com/noahcoleman76/DX-BDR-Dragon). This directory is an independent frontend project and Git repository. It contains none of the original app's backend or credentials. The hosted app now uses its own Supabase project for private email sign-in and cross-device persistence. See [SUPABASE_SETUP.md](SUPABASE_SETUP.md) for first sign-in, browser-record import, and configuration.
 
 ## Start locally
 
@@ -15,7 +15,7 @@ npm ci
 npm run dev
 ```
 
-The app opens without authentication, API keys or a database. It starts with no accounts, contacts, messages or tasks.
+With neither Supabase environment variable set, local development opens in local-only mode without authentication or a database. With cloud configuration, the app requires Supabase email sign-in and loads that user's private records. Partial configuration displays an error instead of falling back silently.
 
 ```powershell
 npm run build
@@ -35,11 +35,11 @@ The build outputs `dist/`. The lockfile records the verified dependency versions
 - The actual Settings appearance section, including all 22 accent choices in Basic, Jewel, Neon and Soft groups, and the logo-based light/dark switch. Theme and accent persistence use the original implementation.
 - Inline fields were extended for multiline text, editable dates, field-level updates, draft retention and safe blur/unmount saves. The Accounts workflow needs capabilities beyond the original simple inline text field.
 
-The original client is organized as a standalone frontend here; its Express/Prisma backend is unnecessary for this browser-local prototype. Unused spreadsheet import/export and reporting dependencies were excluded.
+The original client is organized as a standalone frontend here; its Express/Prisma backend was not reused. The separate Supabase integration provides cloud persistence, with offline queues and a one-time browser import. Unused spreadsheet import/export and reporting dependencies were excluded.
 
 ## Settings dependency that is deliberately excluded
 
-The original Settings page also has a Change password form. It calls the authenticated `/auth/change-password` endpoint and depends on the original login/session backend. The brief explicitly excludes authentication and password management, so that form and its API dependencies are not included. The original appearance section, layout, theme controls and all accent options remain functional. No broken password button or mock password service was substituted.
+The original Settings page's Change password form and `/auth/change-password` API were not reused. The separate cloud integration uses Supabase email sign-in links. The original appearance section, layout, theme controls and all accent options remain functional.
 
 ## Features
 
@@ -65,7 +65,7 @@ The original Settings page also has a Change password form. It calls the authent
 
 All changes persist across route changes and refreshes. Recurring completion has a local calendar period key, separate from permanent ad hoc completion. Owner color assignments and task sort order are persisted. Storage write failures keep edits in memory and show a retry warning. Unreadable stored data is preserved instead of overwritten.
 
-Data belongs to the browser profile and site origin. Local development and a deployed URL have separate records. Clearing site data removes those records. There is no cross-device or simultaneous multi-tab editing coordination in this prototype. A future authenticated database can replace the persistence boundary while keeping the UI and task relationships.
+In the hosted app, `CloudPersistence` queues record-level changes in a user-scoped device cache and saves them through an authenticated, atomic Supabase RPC. Private records synchronize across signed-in devices through Realtime, polling, and reconnection refreshes. The original browser records are retained for explicit import. Clearing site data removes unsynced local-only changes and device preferences, but cloud-saved records remain available after signing in again.
 
 ## File summary
 
@@ -82,7 +82,7 @@ Data belongs to the browser profile and site origin. Local development and a dep
 
 ## Verification
 
-Production build and TypeScript checking passed. Oxlint passed. All 18 automated tests passed, including a run with `TZ=America/Denver`. Browser checks covered account CRUD, filtering, autosave and dates, account/contact messaging, shared task transitions and persistent ordering, the actual Settings controls, and desktop/mobile layouts. See [VERIFICATION.md](VERIFICATION.md) for evidence and limits.
+Production build and TypeScript checking passed. Oxlint passed. All 29 automated tests passed, including cloud merge, retry, import, offline recovery, and session isolation checks. Database transactions verified RLS and atomic-save behavior without retaining test users or records. See [SUPABASE_SETUP.md](SUPABASE_SETUP.md) for cloud setup and verification limits, and [VERIFICATION.md](VERIFICATION.md) for the original UI checks.
 
 ## Live deployment and automatic updates
 
@@ -93,16 +93,10 @@ The app is deployed as the separate Vercel project `dx-bdr-dragon`, in `noahcole
 - Production branch: `main`
 - Framework: Vite; Node.js: 24.x
 - Install: `npm ci`; build: `npm run build`; output: `dist`
-- No application environment variables, database or authentication are required.
+- Supabase client URL and publishable key are configured in Vercel; the hosted app requires private email sign-in.
 
-Pushes to `main` automatically trigger production builds and publication. This connection was verified by pushing a commit and observing its matching production deployment reach READY. Code changes appear after the build completes; refresh the page to load the new version. Use the permanent production URL above so browser-local records remain on the same site origin.
+Pushes to `main` automatically trigger production builds and publication. This connection was verified by pushing a commit and observing its matching production deployment reach READY. Code changes appear after the build completes; refresh the page to load the new version. Use the permanent production URL above for email sign-in and import from your original browser profile.
 
 The included `vercel.json` preserves the source app's SPA rewrite. Direct navigation and refresh on `/tasks`, `/accounts` and `/settings` work. If working locally, use `npm run dev` for immediate development updates, then commit and push reviewed changes to publish them.
 
 The local Vercel link and automatically managed authentication files are ignored by Git. They are not included in the source archive. Do not copy them into another project.
-
-## Logical future improvements — not implemented
-
-- Authenticated database persistence behind the existing storage boundary.
-- Workspace export/import and backup recovery.
-- Coordinated editing across tabs and devices.

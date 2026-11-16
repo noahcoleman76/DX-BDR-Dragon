@@ -1,5 +1,6 @@
 import { emptyData, orderedTasks, ownerKey, periodFor } from './model.ts';
 import type { Account, Category, Contact, Message, Task, WorkspaceData } from './model.ts';
+import { importBrowserRecords } from './changes.ts';
 
 export const STORAGE_KEY = 'bdr-workspace:v1';
 export interface Persistence { read(): WorkspaceData | null; write(data: WorkspaceData): void }
@@ -45,6 +46,13 @@ export class WorkspaceStore {
     this.listeners.forEach(listener => listener());
   }
   retrySave = () => this.publish({ ...this.data });
+  importBrowserData = (data: WorkspaceData) => this.publish(importBrowserRecords(this.data, data));
+  replaceFromCloud = (data: WorkspaceData) => {
+    this.data = data;
+    this.error = '';
+    this.listeners.forEach(listener => listener());
+    this.refreshRecurrences();
+  };
   setSdrName(name: string) {
     if (!name.trim()) throw new Error('SDR name is required.');
     this.publish({ ...this.data, sdrName: name.trim() });
