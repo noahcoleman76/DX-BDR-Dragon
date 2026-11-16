@@ -11,6 +11,7 @@ import type { WorkspaceData } from '../data/model';
 import { Button } from './Button';
 import { BrandLogo } from './BrandLogo';
 import { Field } from './UI';
+import { passwordAuth, changePassword } from '../data/passwordAuth';
 
 interface CloudContextValue { email: string; status: SyncStatus; persistence: CloudPersistence; legacy: WorkspaceData | null; importLegacy: () => void; importError: string; signOut: () => void }
 const CloudContext = createContext<CloudContextValue | null>(null);
@@ -19,24 +20,55 @@ function AuthScreen({ client, initialError = '' }: { client: SupabaseClient; ini
   const [email, setEmail] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(initialError);
-  const [sent, setSent] = useState(false);
+  const [creating, setCreating] = useState(false);
+  const [password, setPassword] = useState('');
+  const [confirmation, setConfirmation] = useState('');
   return <main className="min-h-screen flex items-center justify-center p-5"><section className="panel p-6 w-full max-w-md space-y-5">
     <BrandLogo className="h-16 w-16 object-contain" />
     <div><h1 className="text-2xl font-semibold">BDR Dragon</h1><p className="muted text-sm mt-2">Sign in to access your private workspace on any device.</p></div>
     <form className="space-y-4" onSubmit={async event => {
-      event.preventDefault(); setBusy(true); setError(''); setSent(false);
+      event.preventDefault(); if (busy) return; setBusy(true); setError('');
       try {
-        const result = await client.auth.signInWithOtp({ email: email.trim(), options: { emailRedirectTo: `${window.location.origin}/` } });
-        if (result.error) throw result.error;
-        setSent(true);
+        await passwordAuth(client.auth, { email, password, confirmation, creating });
+        setPassword(''); setConfirmation('');
       } catch (issue) { setError(issue instanceof Error ? issue.message : String(issue)); }
       finally { setBusy(false); }
     }}><Field label="Email"><input className="input" type="email" autoComplete="email" required value={email} onChange={event => setEmail(event.target.value)} /></Field>
-      <Button variant="primary" type="submit" disabled={busy}>{busy ? 'Sending…' : 'Email me a sign-in link'}</Button>
+      <Field label="Password"><input className="input" type="password" autoComplete={creating ? 'new-password' : 'current-password'} required minLength={creating ? 8 : undefined} value={password} onChange={event => setPassword(event.target.value)} /></Field>
+      {creating && <><p className="text-xs muted">Use at least 8 characters.</p><Field label="Confirm password"><input className="input" type="password" autoComplete="new-password" required value={confirmation} onChange={event => setConfirmation(event.target.value)} /></Field></>}
+      <Button variant="primary" type="submit" disabled={busy}>{busy ? (creating ? 'Creating account…' : 'Signing in…') : creating ? 'Create account' : 'Sign in'}</Button>
     </form>
-    {sent && <p role="status" className="text-sm">Check your email and open the sign-in link on this device. Use the same email on your other devices.</p>}
+    <Button variant="ghost" disabled={busy} onClick={() => { setCreating(!creating); setPassword(''); setConfirmation(''); setError(''); }}>{creating ? 'Already have an account? Sign in' : 'New here? Create account'}</Button>
     {error && <p role="alert" className="text-sm danger">{error}</p>}
   </section></main>;
+}
+
+export function PasswordSettings() {
+  const cloud = useContext(CloudContext);
+  const [password, setPassword] = useState('');
+  const [confirmation, setConfirmation] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+  const [saved, setSaved] = useState(false);
+  if (!cloud || !supabase) return null;
+  return <section className="panel p-5 mb-5 max-w-5xl space-y-4">
+    <div><h2 className="font-semibold">Change password</h2><p className="text-sm muted mt-1">Set a password for {cloud.email}. Use at least 8 characters.</p></div>
+    <form className="space-y-4 max-w-md" onSubmit={async event => {
+      event.preventDefault(); if (busy || !supabase) return;
+      setBusy(true); setError(''); setSaved(false);
+      try {
+        await changePassword(supabase.auth, password, confirmation);
+        setPassword(''); setConfirmation(''); setSaved(true);
+      } catch (issue) { setError(issue instanceof Error ? issue.message : String(issue)); }
+      finally { setBusy(false); }
+    }}>
+      <Field label="New password"><input className="input" type="password" autoComplete="new-password" required minLength={8} value={password} onChange={event => { setPassword(event.target.value); setSaved(false); }} /></Field>
+      <Field label="Confirm new password"><input className="input" type="password" autoComplete="new-password" required value={confirmation} onChange={event => { setConfirmation(event.target.value); setSaved(false); }} /></Field>
+      <Button variant="primary" type="submit" disabled={busy}>{busy ? 'Updating…' : 'Update password'}</Button>
+      {error && <p role="alert" className="text-sm danger">{error}</p>}
+      {saved && <p role="status" className="text-sm">Password updated. Use your new password the next time you sign in.</p>}
+    </form>
+  </section>;
 }
 
 function Loading({ error, retry }: { error?: string; retry?: () => void }) {

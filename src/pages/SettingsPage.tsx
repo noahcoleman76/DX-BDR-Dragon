@@ -1,11 +1,13 @@
 import { PageHeader } from "../components/PageHeader";
 import { accentGroups, accentOptions, useTheme } from "../context/ThemeContext";
+import { PasswordSettings } from "../components/CloudGate";
 
 export default function SettingsPage() {
   const { accent, setAccent, mode } = useTheme();
   return (
     <>
       <PageHeader title="Settings" description="Account settings." />
+      <PasswordSettings />
       <section className="mb-5 max-w-5xl rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
         <h2 className="text-sm font-semibold text-slate-700">Appearance</h2>
         <p className="mt-1 text-sm text-slate-500">Click the logo to switch between light and dark mode. Current mode: {mode}.</p>

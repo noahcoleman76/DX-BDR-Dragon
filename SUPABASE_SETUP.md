@@ -6,14 +6,14 @@ Project: **BDR Dragon**, organization **Noman LLC**, reference `avdbxkplkszlroda
 
 ## Browser setup and first sign-in
 
-1. In Supabase, open **Authentication → URL Configuration**. Set **Site URL** to `https://dx-bdr-dragon.vercel.app` and add `https://dx-bdr-dragon.vercel.app/` to **Redirect URLs**. Save. This has been completed by the project owner.
-2. Open [BDR Dragon](https://dx-bdr-dragon.vercel.app/) in the same browser/profile where you previously entered your records.
-3. Enter your email and click **Email me a sign-in link**. For the initial setup, use the email associated with your Supabase organization account. Supabase's built-in email delivery restricts recipients; configure a custom SMTP provider in Supabase before adding other recipients or relying on higher email volumes.
-4. Open the emailed link on that device. A Supabase dashboard login and a BDR Dragon app login are separate sessions.
-5. If the app detects existing browser records, optionally click **Download backup**, then **Import browser records**. Wait for **Saved to cloud**. The original `bdr-workspace:v1` browser records are retained. Import adds records missing from the cloud; existing cloud records with the same IDs take precedence.
-6. On another device, open the app and sign in with the same email. Your cloud records will load. Use the emailed link on the device you are signing into.
+1. In Supabase **Authentication → Sign In / Providers**, leave the Email provider enabled and turn **Confirm email** off, then save. Email addresses are identifiers; this flow does not verify mailbox ownership. No SMTP setup is required.
+2. Open [BDR Dragon](https://dx-bdr-dragon.vercel.app/) in the browser/profile containing your existing records. Choose **New here? Create account**, enter your email, and choose and confirm a password of at least 8 characters.
+3. If that email already belongs to an earlier magic-link account, creating it again will not replace its credentials. If you have an existing app session, open **Settings → Change password** to set its first password. Otherwise the project owner must help establish a password for that existing user through Supabase; do not delete a user that has cloud records.
+4. If the app detects browser records, optionally **Download backup**, then **Import browser records**. Wait for **Saved to cloud**. The original browser records are retained; existing cloud records with the same IDs take precedence.
+5. On another device, sign in with the same email and password. A Supabase dashboard login and an app login are separate sessions.
+6. Change your password in **Settings → Change password** while signed in. Passwords are sent only to Supabase Auth; they are not stored in workspace records or the offline queue. There is no email-based forgotten-password flow in the app.
 
-If delivery fails, check Supabase **Authentication → Logs** and **Authentication → Email / SMTP settings**, including sender setup and recipient restrictions. Do not share database passwords, secret keys, service-role keys, access tokens, or email sign-in links in chat.
+Do not share passwords, secret keys, service-role keys, access tokens, or sign-in links in chat.
 
 ## Application configuration
 
@@ -38,4 +38,4 @@ Realtime notifications refresh the signed-in user's workspace, with a 20-second 
 
 ## Verification
 
-The database was tested inside rolled-back transactions for private user isolation, blocked cross-user updates, field merges, retry deduplication, and delete cascades. The security advisor reported no findings. Automated app tests cover offline/reconnect behavior, imports, concurrent edits, late responses after closing a session, and the existing workspace features. Actual email delivery, first sign-in, and import must be completed in the user's browser using their own email.
+The database was tested inside rolled-back transactions for private user isolation, blocked cross-user updates, field merges, retry deduplication, and delete cascades. The security advisor reported no findings. Automated app tests cover offline/reconnect behavior, imports, concurrent edits, late responses after closing a session, and the existing workspace features. The user completes account creation, actual password changes, first sign-in, and import in their own browser.

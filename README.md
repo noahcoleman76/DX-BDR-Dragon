@@ -37,9 +37,9 @@ The build outputs `dist/`. The lockfile records the verified dependency versions
 
 The original client is organized as a standalone frontend here; its Express/Prisma backend was not reused. The separate Supabase integration provides cloud persistence, with offline queues and a one-time browser import. Unused spreadsheet import/export and reporting dependencies were excluded.
 
-## Settings dependency that is deliberately excluded
+## Account settings
 
-The original Settings page's Change password form and `/auth/change-password` API were not reused. The separate cloud integration uses Supabase email sign-in links. The original appearance section, layout, theme controls and all accent options remain functional.
+Settings provides a Supabase-backed Change password form for the signed-in account. Sign in and Create account use email and password. Supabase Confirm email must be off for signup without email delivery. The original appearance section, layout, theme controls and all accent options remain functional.
 
 ## Features
 
@@ -75,7 +75,7 @@ In the hosted app, `CloudPersistence` queues record-level changes in a user-scop
 | Retained/adapted UI | `Button.tsx`, `PageHeader.tsx`, `AppSelect.tsx`, `Modal.tsx`, `ConfirmDialog.tsx`, `DraggableRow.tsx`, `InlineField.tsx` in `src/components/` |
 | Shared data | `src/data/model.ts`, `store.ts`, `react.ts`: models, local persistence, shared operations, React subscription |
 | New workflows | `src/pages/AccountsPage.tsx`, `TasksPage.tsx`; `src/components/Contacts.tsx`, `Messages.tsx`, `TaskList.tsx`, `UI.tsx` |
-| Settings | `src/pages/SettingsPage.tsx`: retained appearance implementation; password form excluded as described above |
+| Settings | `src/pages/SettingsPage.tsx`: retained appearance implementation with a new Supabase password form |
 | Routes and styling | `src/App.tsx`, `src/workspace.css`: four routes, recurrence scheduler, workspace extensions to the retained design tokens |
 | Build and deployment | `package.json`, `package-lock.json`, `vite.config.ts`, `vercel.json`, `index.html`, `.nvmrc`, `.vercelignore`, TypeScript configuration |
 | Verification | `tests/workspace.test.ts`, `VERIFICATION.md` |
